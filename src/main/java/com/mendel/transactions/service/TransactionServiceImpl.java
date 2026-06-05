@@ -29,4 +29,18 @@ public class TransactionServiceImpl implements TransactionService{
                 .map(Transaction::getId)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Double calculateSum(Long id) {
+        Transaction transaction = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("transaction not found"));
+
+        double sum = transaction.getAmount();
+
+        for (Transaction child : repository.findByParentId(id)) {
+            sum += calculateSum(child.getId());
+        }
+
+        return sum;
+    }
 }
