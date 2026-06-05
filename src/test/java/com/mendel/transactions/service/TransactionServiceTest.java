@@ -8,6 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +50,21 @@ public class TransactionServiceTest {
         assertThatThrownBy(() -> service.save(11L, transaction))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("parent");
+    }
+
+
+    @Test
+    void shouldReturnTransactionIdsByType() {
+        Transaction t = Transaction.builder()
+                .id(10L)
+                .amount(5000.0)
+                .type("cars")
+                .build();
+
+        when(repository.findByType("cars")).thenReturn(List.of(t));
+
+        List<Long> ids = service.getIdsByType("cars");
+
+        assertThat(ids).containsExactly(10L);
     }
 }
