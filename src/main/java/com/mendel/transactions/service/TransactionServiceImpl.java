@@ -14,6 +14,9 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public void save(Long id, Transaction transaction) {
+        if (transaction.getParentId() != null && !repository.existsById(transaction.getParentId())) {
+            throw new IllegalArgumentException("parent transaction not found");
+        }
         repository.save(id, transaction);
     }
 }
