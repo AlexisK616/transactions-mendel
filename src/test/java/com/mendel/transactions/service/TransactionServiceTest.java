@@ -8,6 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
@@ -28,5 +31,21 @@ public class TransactionServiceTest {
                 .build();
 
         service.save(10L, transaction);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenParentDoesNotExist() {
+        Transaction transaction = Transaction.builder()
+                .id(11L)
+                .amount(10000.0)
+                .type("shopping")
+                .parentId(99L)
+                .build();
+
+        when(repository.existsById(99L)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.save(11L, transaction))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("parent");
     }
 }
