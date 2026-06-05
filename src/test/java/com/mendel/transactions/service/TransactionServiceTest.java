@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -66,5 +67,26 @@ public class TransactionServiceTest {
         List<Long> ids = service.getIdsByType("cars");
 
         assertThat(ids).containsExactly(10L);
+    }
+
+    @Test
+    void shouldCalculateTransitiveSum() {
+        Transaction t10 = Transaction.builder()
+                .id(10L).amount(5000.0).type("cars").build();
+        Transaction t11 = Transaction.builder()
+                .id(11L).amount(10000.0).type("shopping").parentId(10L).build();
+        Transaction t12 = Transaction.builder()
+                .id(12L).amount(5000.0).type("shopping").parentId(11L).build();
+
+        when(repository.findById(10L)).thenReturn(Optional.of(t10));
+        when(repository.findById(11L)).thenReturn(Optional.of(t11));
+        when(repository.findById(12L)).thenReturn(Optional.of(t12));
+        when(repository.findByParentId(10L)).thenReturn(List.of(t11));
+        when(repository.findByParentId(11L)).thenReturn(List.of(t12));
+        when(repository.findByParentId(12L)).thenReturn(List.of());
+
+        Double sum = service.calculateSum(10L);
+
+        assertThat(sum).isEqualTo(20000.0);
     }
 }
