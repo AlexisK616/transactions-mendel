@@ -89,4 +89,13 @@ public class TransactionServiceTest {
 
         assertThat(sum).isEqualTo(20000.0);
     }
+
+    @Test
+    void shouldThrowExceptionWhenTransactionNotFound() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.calculateSum(99L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("transaction not found");
+    }
 }
