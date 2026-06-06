@@ -48,4 +48,26 @@ class TransactionIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").value(20L));
     }
+
+    @Test
+    void shouldReturnTransitiveSum() throws Exception {
+        mockMvc.perform(put("/transactions/30")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                        new TransactionRequest(5000.0, "cars", null))));
+
+        mockMvc.perform(put("/transactions/31")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                        new TransactionRequest(10000.0, "shopping", 30L))));
+
+        mockMvc.perform(put("/transactions/32")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                        new TransactionRequest(5000.0, "shopping", 31L))));
+
+        mockMvc.perform(get("/transactions/sum/30"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sum").value(20000.0));
+    }
 }
