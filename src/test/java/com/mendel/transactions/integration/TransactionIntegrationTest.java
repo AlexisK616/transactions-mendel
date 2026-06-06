@@ -70,4 +70,13 @@ class TransactionIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sum").value(20000.0));
     }
+
+    @Test
+    void shouldReturnBadRequestWhenParentDoesNotExist() throws Exception {
+        mockMvc.perform(put("/transactions/40")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new TransactionRequest(5000.0, "cars", 999L))))
+                .andExpect(status().isBadRequest());
+    }
 }
