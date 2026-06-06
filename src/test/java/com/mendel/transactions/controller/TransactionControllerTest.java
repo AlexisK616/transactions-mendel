@@ -54,5 +54,12 @@ class TransactionControllerTest {
                 .andExpect(jsonPath("$[0]").value(10L));
     }
 
+    @Test
+    void shouldReturnTransactiveSum() throws Exception {
+        when(transactionService.calculateSum(10L)).thenReturn(20000.0);
 
+        mockMvc.perform(get("/transactions/sum/10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sum").value(20000.0));
+    }
 }
