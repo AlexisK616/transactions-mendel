@@ -1,6 +1,7 @@
 package com.mendel.transactions.controller;
 
 
+import com.mendel.transactions.dto.SumResponse;
 import com.mendel.transactions.dto.TransactionRequest;
 import com.mendel.transactions.model.Transaction;
 import com.mendel.transactions.service.TransactionService;
@@ -40,5 +41,10 @@ public class TransactionController {
     @GetMapping("/types/{type}")
     public ResponseEntity<List<Long>> getByType(@PathVariable String type) {
         return ResponseEntity.ok(transactionService.getIdsByType(type));
+    }
+
+    @GetMapping("/sum/{id}")
+    public ResponseEntity<SumResponse> getSum(@PathVariable Long id) {
+        return ResponseEntity.ok(new SumResponse(transactionService.calculateSum(id)));
     }
 }
