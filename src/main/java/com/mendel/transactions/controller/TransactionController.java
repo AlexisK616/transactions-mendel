@@ -7,6 +7,7 @@ import com.mendel.transactions.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,5 +35,10 @@ public class TransactionController {
         transactionService.save(id, transaction);
 
         return ResponseEntity.ok(Map.of("status", "ok"));
+    }
+
+    @GetMapping("/types/{type}")
+    public ResponseEntity<List<Long>> getByType(@PathVariable String type) {
+        return ResponseEntity.ok(transactionService.getIdsByType(type));
     }
 }
