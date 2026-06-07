@@ -36,7 +36,7 @@ public class TransactionController {
 
         transactionService.save(id, transaction);
 
-        return ResponseEntity.ok(new StatusResponse("OK",null));
+        return ResponseEntity.ok(new StatusResponse("ok",null));
     }
 
     @GetMapping("/types/{type}")

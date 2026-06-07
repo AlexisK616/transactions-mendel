@@ -1,5 +1,6 @@
 package com.mendel.transactions.service;
 
+import com.mendel.transactions.exception.ParentTransactionNotFoundException;
 import com.mendel.transactions.model.Transaction;
 import com.mendel.transactions.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
@@ -49,8 +50,8 @@ public class TransactionServiceTest {
         when(repository.existsById(99L)).thenReturn(false);
 
         assertThatThrownBy(() -> service.save(11L, transaction))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("parent");
+                .isInstanceOf(ParentTransactionNotFoundException.class)
+                .hasMessageContaining("Parent");
     }
 
 
@@ -95,7 +96,7 @@ public class TransactionServiceTest {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.calculateSum(99L))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(ParentTransactionNotFoundException.class)
                 .hasMessageContaining("transaction not found");
     }
 }
