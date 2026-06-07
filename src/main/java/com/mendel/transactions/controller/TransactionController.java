@@ -1,6 +1,7 @@
 package com.mendel.transactions.controller;
 
 
+import com.mendel.transactions.dto.StatusResponse;
 import com.mendel.transactions.dto.SumResponse;
 import com.mendel.transactions.dto.TransactionRequest;
 import com.mendel.transactions.model.Transaction;
@@ -22,7 +23,7 @@ public class TransactionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> createTransaction(
+    public ResponseEntity<StatusResponse> createTransaction(
             @PathVariable Long id,
             @RequestBody TransactionRequest request) {
 
@@ -35,7 +36,7 @@ public class TransactionController {
 
         transactionService.save(id, transaction);
 
-        return ResponseEntity.ok(Map.of("status", "ok"));
+        return ResponseEntity.ok(new StatusResponse("OK"));
     }
 
     @GetMapping("/types/{type}")
