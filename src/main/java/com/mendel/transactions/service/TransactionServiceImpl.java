@@ -1,5 +1,6 @@
 package com.mendel.transactions.service;
 
+import com.mendel.transactions.exception.ParentTransactionNotFoundException;
 import com.mendel.transactions.model.Transaction;
 import com.mendel.transactions.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class TransactionServiceImpl implements TransactionService{
     @Override
     public void save(Long id, Transaction transaction) {
         if (transaction.getParentId() != null && !repository.existsById(transaction.getParentId())) {
-            throw new IllegalArgumentException("parent transaction not found");
+            throw new ParentTransactionNotFoundException(transaction.getParentId());
         }
         repository.save(id, transaction);
     }
@@ -33,7 +34,7 @@ public class TransactionServiceImpl implements TransactionService{
     @Override
     public Double calculateSum(Long id) {
         Transaction transaction = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("transaction not found"));
+                .orElseThrow(() -> new ParentTransactionNotFoundException(id));
 
         double sum = transaction.getAmount();
 
